@@ -2,6 +2,8 @@
 Positive Pressure Monitoring System<br />
 By Paul Clarke - June 2016
 
+"The cheapest, fastest, and most reliable components are those that aren't there" - Gordon Bell
+
 Synopsis:
 
 This is a Python program for monitoring two pressure sensors as part of a Raspberry Pi Zero closed-loop control system.
