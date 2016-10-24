@@ -2,6 +2,8 @@
 Positive Pressure Monitoring System<br />
 By Paul Clarke - June 2016
 
+***** CURRENTLY INACTIVE PROJECT ***** Reason: Needs to use threading to read in seperate code segments, or re-written to one piece *****
+
 "The cheapest, fastest, and most reliable components are those that aren't there" - Gordon Bell
 
 Synopsis:
