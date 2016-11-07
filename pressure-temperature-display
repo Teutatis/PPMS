@@ -1,0 +1,67 @@
+#Python script to read in the sensor data from two BMP-280 breakout boards, connected via the I2C bus.
+#Data taken from the pressure and temperature registers, formatted and printed to the terminal.
+
+#Sensor_1 = Connection pins on same side of the pressure sensor IC package / SDO pin driven low (GND).
+#Sensor_2 = Connection pins on opposite side of the pressure sensor IC package / SDO pin driven high (+3.3v).
+
+# Import system, BME280 driver, Adafruit library and create instance of REST client.
+import sys
+from Adafruit_IO import Client
+from Adafruit_BME280 import *
+
+while True:
+  try:
+	  
+    #Define each sensor address.
+    sensor_1 = BME280(mode=BME280_OSAMPLE_8, address = 0x76)
+    sensor_2 = BME280(mode=BME280_OSAMPLE_8, address = 0x77)
+    
+    #Set up the variables for sensor_1 (0x76) and read in the data.
+    degrees_1 = sensor_1.read_temperature()
+    pascals_1 = sensor_1.read_pressure()
+    hectopascals_1 = pascals_1 / 100
+    humidity_1 = sensor_1.read_humidity()
+
+    #Set up the variables for sensor_2 (0x77) and read in the data.
+    degrees_2 = sensor_2.read_temperature()
+    pascals_2 = sensor_2.read_pressure()
+    hectopascals_2 = pascals_2 / 100
+    humidity_2 = sensor_2.read_humidity()
+    
+    #Format the sensor data and print to the terminal. 
+    Str_temperature_sensor_1 = 'Sensor#1 : {0:0.3f} degC / '.format(degrees_1)
+    Str_pressure_sensor_1 = '{0:0.2f} hPa'.format(hectopascals_1)
+    Str_temperature_sensor_2 = '        Sensor#2 : {0:0.3f} degC / '.format(degrees_2)
+    Str_pressure_sensor_2 = '{0:0.2f} hPa'.format(hectopascals_2)
+  
+    nrchars_temperature_sensor_1 = len(Str_temperature_sensor_1)
+    nrchars_pressure_sensor_1 = len(Str_pressure_sensor_1)
+    nrchars_temperature_sensor_2 = len(Str_temperature_sensor_2)
+    nrchars_pressure_sensor_2 = len(Str_pressure_sensor_2)
+    
+    sys.stdout.write("\b \b"*nrchars_temperature_sensor_1)
+    sys.stdout.write("\b \b"*nrchars_pressure_sensor_1)
+    sys.stdout.write("\b \b"*nrchars_temperature_sensor_2)
+    sys.stdout.write("\b \b"*nrchars_pressure_sensor_2)
+    
+    sys.stdout.write(Str_temperature_sensor_1)
+    sys.stdout.write(Str_pressure_sensor_1)
+    sys.stdout.write(Str_temperature_sensor_2)
+    sys.stdout.write(Str_pressure_sensor_2)
+    
+    sys.stdout.flush()
+    
+    # Log in to Adafruit IO.
+    aio = Client('5b7efbea2e154aedb80e75564d482fd9')
+    
+    # Send pressure / temperature data out to the Adafruit IO site.
+    # aio.send('feed_name', data_value)
+    aio.send('sensor_1_temperature', degrees_1)
+    aio.send('sensor_1_pressure', hectopascals_1)
+    aio.send('sensor_2_temperature', degrees_2)
+    aio.send('sensor_2_pressure', hectopascals_2)
+        
+    time.sleep(1) #Value is in seconds, 60=1min, 3600=1hour
+    
+  except KeyboardInterrupt: #Exits program.
+    break 
